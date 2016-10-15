@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+
+	<!-- This slide deck uses reveal.js by Hakim El Hattab.
+
+	Copyright (C) 2016 Hakim El Hattab, http://hakim.se
+
+	MIT License -->
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>From the Kalman to the particle filter</title>
+
+		<meta name="description" content="From the Kalman to the particle filter">
+		<meta name="author" content="Mikhail Pak, TUM">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/solarized.css" id="theme">
+
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+
+	<body>
+		<div class="reveal">
+
+			<div class="slides">
+				<section class="center">
+					<h2>From the Kalman to the particle filter</h2>
+					<p>
+						<small>
+							<a href="mailto:mikhail.pak@tum.de">Mikhail Pak</a><br>
+							Department of Mechanical Engineering<br>
+							Technical University of Munich
+						</small>
+					</p>
+				</section>
+
+				<section>
+					<h3>The Cauchy-Schwarz Inequality</h3>
+
+					<script type="math/tex; mode=display">
+						\left( \sum_{k=1}^n a_k b_k \right)^2 \leq \left( \sum_{k=1}^n a_k^2 \right) \left( \sum_{k=1}^n b_k^2 \right)
+					</script>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template">
+						### Markdown test slide
+
+						* Item 1
+						* Item 2
+
+					</script>
+				</section>
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			Reveal.initialize({
+				controls: false,
+				progress: true,
+				history: true,
+				center: false,
+
+				transition: 'none', // none/fade/slide/convex/concave/zoom
+
+				math: {
+					// mathjax: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js',
+					config: 'TeX-AMS_HTML-full'
+				},
+
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/math/math.js', async: true }
+					// { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					// { src: 'plugin/zoom-js/zoom.js', async: true },
+					// { src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+	</body>
+</html>
