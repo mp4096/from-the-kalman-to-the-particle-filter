@@ -44,15 +44,132 @@ MIT License
 </section>
 
 <section>
-	<h3>The Cauchy-Schwarz Inequality</h3>
-
-	<script type="math/tex; mode=display">
-		\left( \sum_{k=1}^n a_k b_k \right)^2 \leq \left( \sum_{k=1}^n a_k^2 \right) \left( \sum_{k=1}^n b_k^2 \right)
-	</script>
+	<h3>Outline</h3>
+	<ul>
+		<!-- TODO: Slide numbers -->
+		<li><p><a style="color:#222" href="#/1">Introduction</a></p></li>
+		<li><p><a style="color:#222" href="#/1">Kalman filter as a recursive Bayesian estimator</a></p></li>
+		<li><p><a style="color:#222" href="#/1">The basic idea of the particle filter</a></p></li>
+		<li><p><a style="color:#222" href="#/1">Sequential importance resampling</a></p></li>
+		<li><p><a style="color:#222" href="#/1">Resampling methods</a></p></li>
+		<li><p><a style="color:#222" href="#/1">Comparison to EKF, UKF and EnKF</a></p></li>
+		<li><p><a style="color:#222" href="#/1">An example: Face tracking</a></p></li>
+	</ul>
 </section>
 
 <section>
-	Empty slide
+	<h3>Introduction</h3>
+	<p>
+		a
+	</p>
+	<p>
+		b
+	</p>
+</section>
+
+<section>
+	<h3>Introduction</h3>
+	<p>Let’s revise Bayesian inference before we discuss the filtering problem.</p>
+	<p>All derivations will be based on Bayes’ theorem:</p>
+	<script type="math/tex; mode=display">
+		p(A \,|\,B) = \frac{p(B \,|\,A) \ p(A)}{p(B)}
+	</script>
+	<div class="fragment">
+	or, informally:
+	<script type="math/tex; mode=display">
+		p(\text{State} \,|\,\text{Measurements} )
+		=
+		\frac{
+			p(\text{Measurements} \,|\,\text{State} )\ p(\text{State})
+		}{
+			p(\text{Measurements})
+		}.
+	</script></p>
+	</div>
+	<div class="fragment">
+	<p>Here,<ul>
+		<li class="fragment"><p>$p(\text{State}\,|\,\text{Measurements})$ is the <em>posterior</em>;</p></li>
+		<li class="fragment"><p>$p(\text{Measurements}\,|\,\text{State})$ is the <em>likelihood</em>;</p></li>
+		<li class="fragment"><p>$p(\text{State})$ is the <em>prior</em>;</p></li>
+		<li class="fragment"><p>$p(\text{Measurements})$ is the <em>total likelihood</em>.</p></li>
+	</ul></p>
+	</div>
+</section>
+
+<section>
+	<h3>Kalman filter as a recursive Bayesian estimator</h3>
+
+	<script type="math/tex; mode=display">
+		p(x_k \,|\,y_k, \mathcal{Y}_{k - 1})
+		=
+		\frac{%
+			p(y_k \,|\,x_k, \mathcal{Y}_{k - 1})
+			\ %
+			p(x_k \,|\,\mathcal{Y}_{k - 1})
+		}{%
+			p(y_k \,|\,\mathcal{Y}_{k - 1})
+		}.
+	</script><br>
+</section>
+
+<section>
+	<h3>The basic idea of the particle filter</h3>
+	<p>
+		a
+	</p>
+	<p>
+		b
+	</p>
+</section>
+
+<section>
+	<h3>Sequential importance resampling</h3>
+	<p>
+		a
+	</p>
+	<p>
+		b
+	</p>
+</section>
+
+<section>
+	<h3>Resampling methods</h3>
+	<p>
+		a
+	</p>
+	<p>
+		b
+	</p>
+</section>
+
+<section>
+	<h3>Comparison to EKF, UKF and EnKF</h3>
+	<p>
+		a
+	</p>
+	<p>
+		b
+	</p>
+</section>
+
+<section>
+	<h3>An example: Face tracking</h3>
+	<p>
+		a
+	</p>
+	<p>
+		b
+	</p>
+</section>
+
+<section>
+	<h3>References</h3>
+	<p>
+		a
+	</p>
+	<p>
+		b
+	</p>
 </section>
 
 
