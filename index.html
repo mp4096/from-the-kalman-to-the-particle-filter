@@ -37,10 +37,8 @@ MIT License
 
 <section class="center">
 	<h2>From the Kalman to the particle filter</h2>
-	<small>
-		<p><a style="color:#222" href="https://github.com/mp4096">Mikhail Pak</a>, November 2016</p>
-		<p style="color:#EEE">CC-BY-NC-SA 4.0</p>
-	</small>
+	<p><a style="color:#222; font-size: 75%" href="https://github.com/mp4096">Mikhail Pak</a>, November 2016</p>
+	<p style="color:#EEE; font-size: 75%">CC-BY-NC-SA 4.0</p>
 </section>
 
 <section>
@@ -49,11 +47,10 @@ MIT License
 		<li><p><a style="color:#222" href="#/2">Introduction</a></p></li>
 		<li><p><a style="color:#222" href="#/5">Kalman filter as a Bayesian estimator</a></p></li>
 		<li><p><a style="color:#222" href="#/6">Sequential importance sampling</a></p></li>
-		<li><p><a style="color:#222" href="#/10">Making it work: SIR</a></p></li>
+		<li><p><a style="color:#222" href="#/10">Making it work: SIR and RPF</a></p></li>
+		<li><p><a style="color:#222" href="#/13">Comparison to EKF, UKF and EnKF</a></p></li>
+		<li><p><a style="color:#222" href="#/14">An example: Face tracking</a></p></li>
 		<!-- TODO: Slide numbers -->
-		<li><p><a style="color:#222" href="#/1">Further extensions of the particle filter</a></p></li>
-		<li><p><a style="color:#222" href="#/1">Comparison to EKF, UKF and EnKF</a></p></li>
-		<li><p><a style="color:#222" href="#/1">An example: Face tracking</a></p></li>
 		<li><p><a style="color:#222" href="#/1">Conclusion</a></p></li>
 	</ul>
 </section>
@@ -64,9 +61,10 @@ MIT License
 		The Kalman filter is well-known in the control engineering community.
 		Its extensions (EKF, UKF, EnKF, mixture KF) allow handling of nonlinear, non-Gaussian problems.
 	</p>
-	<p class="fragment">
-		On the other hand, we can also tackle the nonlinear filtering problem using a <em>particle filter</em>.
-		In this talk, I will<ul>
+	<div class="fragment">
+		<p>On the other hand, we can also tackle the nonlinear filtering problem using a <em>particle filter</em>.
+		In this talk, I will</p>
+		<ul>
 			<li class="fragment"><p>show how both the Kalman and the particle filter can be derived
 				using the same Bayesian framework;</p></li>
 			<li class="fragment"><p>present the most widespread variants of the particle filter;</p></li>
@@ -74,7 +72,7 @@ MIT License
 			<li class="fragment"><p>compare it with the extensions of the Kalman filter;</p></li>
 			<li class="fragment"><p>show a simple demo of a particle filter for face tracking.</p></li>
 		</ul>
-	</p>
+	</div>
 </section>
 
 <section>
@@ -83,8 +81,9 @@ MIT License
 		We consider a discrete-time autonomous system.
 		Furthermore, we assume that it satisfies the Markov property.
 	</p>
-	<p class="fragment">
-		For a time instant $k$, we denote<ul>
+	<div class="fragment">
+		<p>For a time instant $k$, we denote</p>
+		<ul>
 			<li class="fragment"><p>state by $x_k \in \mathbb{R}^n$;</p></li>
 			<li class="fragment"><p>state trajectory $x_0, \ldots, x_k$ by $\mathcal{X}_k$;</p></li>
 			<li class="fragment"><p>measurement by $y_k \in \mathbb{R}^q$;</p></li>
@@ -92,6 +91,7 @@ MIT License
 			<li class="fragment"><p>transition pdf by $p(x_k | x_{k - 1})$;</p></li>
 			<li class="fragment"><p>measurement pdf by $p(y_k | x_k)$.</p></li>
 		</ul>
+	</div>
 </section>
 
 <section>
@@ -275,47 +275,85 @@ MIT License
 		</script>
 	</p><br>
 	<p class="fragment">
-		We can summarise this algorithm in two steps: 1) draw samples from the proposal pdf;
-		2) update the weigths. This algorithm is called <em>sequential importance sampling (SIS)</em>.
+		We can summarise this algorithm as follows: 1) Draw samples from the proposal pdf;
+		2) Update the weigths. This is the so called <em>sequential importance sampling (SIS)</em>.
 	</p>
 </section>
 
 <section>
-	<h3>Making it work: SIR 1/TODO</h3>
+	<h3>Making it work: SIR and RPF 1/3</h3>
+	<p>
+		The plain SIS algorithm suffers from the <em>degeneracy phenomenon</em>, i.e. the variance
+		of the weights increases over time. Furthermore, we still have to choose an appropriate
+		proposal pdf $q(x_k | x_{k - 1}, y_k)$.
+	</p>
 	<p class="fragment">
-		Theoretically, we could set all weights equal and draw $x^{(i)}_k$ directly from $p(x_k | \mathcal{Y}_k)$.
-		However, this would be very ineffective, since we would sample from the whole state space,
-		including its 	&lsquo;unimportant&rsquo; regions.
+		The <em>sequential importance resampling (SIR)</em> algorithm is the most widespread particle filtering algorithm.
+		Its first main &lsquo;ingredient&rsquo; is to resample the particles after each step to avoid degeneracy.
+		There are many resampling methods, e.g. multinomial, residual, systematic and stratified.
+		Due to resampling, $w^{(i)}_{k - 1} = N^{-1}$ $\forall i$.
 	</p>
-	<p>
-		Use the transition conditional distribution as the importance distribution function. -> SIS
-	</p>
-	<p>
-		SIS suffers from the so called samples degeneracy, i.e. there are a lot of particles with
-		very low weight while a couple of particles have huge weights and dominate the pdf.
-	</p>
-	<p>
-		Solution: Resample (with replacemnt) if the number of effective particles falls below a certain
-		threshold. -> SIR
-	</p>
-	<p>
-		However, this, in turn, can lead to other problems such as samples impoverishment, i.e.
-		the samples cluster all around the same point in state space.
-		This happens especially often if the process noise is very small.
-	</p>
-	<p>
-		Solution: Regularised particle filter.
+	<p class="fragment">
+		The second &lsquo;ingredient&rsquo; is to use the prior density as a proposal pdf<br><br>
+		<script type="math/tex; mode=display">
+			q(x_k | x^{(i)}_{k - 1}, y_k) = p(x_k | x^{(i)}_{k - 1})
+		</script><br>
+		which, together with resampling, leads us to a very simple weight update equation:<br><br>
+		<script type="math/tex; mode=display">
+			w^{(i)}_k \propto p(y_k | x^{(i)}_k).
+		</script>
 	</p>
 </section>
 
 <section>
-	<h3>Resampling methods</h3>
+	<h3>Making it work: SIR and RPF 2/3</h3>
 	<p>
-		There are multiple resampling methods, all of which have some advantages and disadvantages:
-		monomial, systematic, stratified and residual
+		Thus, we can finally specify an algorithm for a usable particle filter:
 	</p>
+<pre><code class="lang-python" data-trim data-noescape>
+while True:
+    y_curr = get_measurements()
+
+    # Propagate particles and update their weights
+    for i in range(N):
+        x_curr[i] = sample_from_prior(x_prev)
+        w_curr[i] = update_weights(y_curr, x_curr[i])
+
+    # Normalise weights
+    w_curr /= sum(w_curr)
+
+    # Resample particles according to their weights
+    x_prev = resample(x_curr, w_curr)
+</code></pre><br>
+</section>
+
+<section>
+	<h3>Making it work: SIR and RPF 3/3</h3>
 	<p>
-		b
+		Unfortunately, SIR itself suffers from <em>sample impoverishment</em>,
+		especially if the process noise is small.
+		In this case, a <em>regularised particle filter</em> might be a good solution.
+	</p>
+	<p class="fragment">
+		A regularised particle filter is identical to the SIR except that it resamples from
+		a continuous approximation for the posterior pdf:<br><br>
+		<script type="math/tex; mode=display">
+			p(x_k | \mathcal{Y}_k) \approx \sum_{i = 1}^N w^{(i)}_{k} K(x_k - x^{(i)}_k).
+		</script>
+	</p>
+	<p class="fragment">
+		$K(x)$ is an appropriate kernel pdf such that<br><br>
+		<script type="math/tex; mode=display">
+		\begin{aligned}
+			&\int x \, K(x) dx = 0 &
+			&\text{and} &
+			&\int \|x\|^2 K(x) dx < \infty.
+		\end{aligned}
+		</script>
+	</p>
+	<p class="fragment">
+		The kernel type and its hyperparameters are a design choice depending on
+		the formulation of the particle filter.
 	</p>
 </section>
 
