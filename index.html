@@ -48,9 +48,9 @@ MIT License
 	<ul>
 		<li><p><a style="color:#222" href="#/2">Introduction</a></p></li>
 		<li><p><a style="color:#222" href="#/5">Kalman filter as a Bayesian estimator</a></p></li>
-		<li><p><a style="color:#222" href="#/6">A generic particle filter</a></p></li>
+		<li><p><a style="color:#222" href="#/6">Sequential importance sampling</a></p></li>
+		<li><p><a style="color:#222" href="#/10">Making it work: SIR</a></p></li>
 		<!-- TODO: Slide numbers -->
-		<li><p><a style="color:#222" href="#/1">Sequential importance resampling</a></p></li>
 		<li><p><a style="color:#222" href="#/1">Further extensions of the particle filter</a></p></li>
 		<li><p><a style="color:#222" href="#/1">Comparison to EKF, UKF and EnKF</a></p></li>
 		<li><p><a style="color:#222" href="#/1">An example: Face tracking</a></p></li>
@@ -86,9 +86,9 @@ MIT License
 	<p class="fragment">
 		For a time instant $k$, we denote<ul>
 			<li class="fragment"><p>state by $x_k \in \mathbb{R}^n$;</p></li>
+			<li class="fragment"><p>state trajectory $x_0, \ldots, x_k$ by $\mathcal{X}_k$;</p></li>
 			<li class="fragment"><p>measurement by $y_k \in \mathbb{R}^q$;</p></li>
 			<li class="fragment"><p>sequence of measurements $y_0, \ldots, y_k$ by $\mathcal{Y}_k$;</p></li>
-			<li class="fragment"><p>posterior pdf by $p(x_k | \mathcal{Y}_k)$;</p></li>
 			<li class="fragment"><p>transition pdf by $p(x_k | x_{k - 1})$;</p></li>
 			<li class="fragment"><p>measurement pdf by $p(y_k | x_k)$.</p></li>
 		</ul>
@@ -168,26 +168,125 @@ MIT License
 </section>
 
 <section>
-	<h3>A generic particle filter</h3>
+	<h3>Sequential importance sampling 1/4</h3>
 	<p>
 		The main idea of a particle filter is to approximate the posterior pdf
-		by a finite set of weighted samples (particles):
+		by a finite number of samples (particles):
 	</p>
 	<script type="math/tex; mode=display">
-		p(x_k | \mathcal{Y}_k) \approx \sum_{i = 1}^{N} w^{(i)}_k \delta(x_k - x^{(i)}_k),
+		p(\mathcal{X}_k | \mathcal{Y}_k) \approx \sum_{i = 1}^{N} \delta(\mathcal{X}_k - \mathcal{X}^{(i)}_k),
 	</script>
 	<p class="fragment">
-		where $\delta$ is the Dirac measure, $w^{(i)}_k$ is the <em>weight</em> of the $i$-th particle
-		at the time instant $k$ and $x^{(i)}_k$ is the $i$-th sample drawn from some
-		<em>proposal distribution</em> over the state space.
+		where $\delta$ is the Dirac measure and $\mathcal{X}^{(i)}_k$ is the $i$-th sample drawn from $p(\mathcal{X}_k | \mathcal{Y}_k)$.
 	</p>
 	<p class="fragment">
-		Theoretically, we could set all weights equal and draw $x^{(i)}_k$ directly from $p(x_k | \mathcal{Y}_k)$.
+		Unfortunately, this naïve approach has two significant disadvantages:
+		<ol>
+			<li class="fragment"><p>
+				it converges very slowly, since we sample from the whole state space,
+				including its &lsquo;unimportant&rsquo; regions.
+			</p></li>
+			<li class="fragment"><p>
+				the posterior pdf itself is unknown; furthermore, it can be very difficult to draw samples
+				from this distribution.
+			</p></li>
+		</ol>
 	</p>
 </section>
 
 <section>
-	<h3>Sequential importance resampling</h3>
+	<h3>Sequential importance sampling 2/4</h3>
+	<p>
+		Enter <em>importance sampling</em>.
+	</p>
+	<p>
+		We can extend a probability distribution $p(x)$ by
+		$q(x) q(x)^{-1} = 1$ without changing it.
+		Hence, we can approximate the posterior pdf
+		by a finite number of <em>weighted</em> samples:
+	</p>
+	<script type="math/tex; mode=display">
+		p(\mathcal{X}_k | \mathcal{Y}_k) \approx \sum_{i = 1}^{N} w^{(i)}_k \delta(\mathcal{X}_k - \mathcal{X}^{(i)}_k),
+	</script>
+	<p class="fragment">
+		where $\mathcal{X}^{(i)}_k$ are drawn from the <em>proposal pdf</em> $q(\mathcal{X}_k | \mathcal{Y}_k)$ and
+		the weights are chosen as<br><br>
+		<script type="math/tex; mode=display">
+			w^{(i)}_k \propto \frac{p(\mathcal{X}^{(i)}_k | \mathcal{Y}_k)}{q(\mathcal{X}^{(i)}_k | \mathcal{Y}_k)}.
+		</script>
+	</p>
+	<p class="fragment">
+		Obviously, we would try to choose $q(\mathcal{X}_k | \mathcal{Y}_k)$ such that it is easy to sample.
+		Furthermore, we restrict it to the following form:
+	</p>
+	<p class="fragment"><script type="math/tex; mode=display">
+		q(\mathcal{X}_k | \mathcal{Y}_k) =
+			q(x_k | \mathcal{X}_{k - 1}, \mathcal{Y}_k) \, q(\mathcal{X}_{k - 1} | \mathcal{Y}_{k - 1}).
+	</script></p>
+</section>
+
+<section>
+	<h3>Sequential importance sampling 3/4</h3>
+	<p>
+		Now we have to derive the weight update equation. Apply Bayes' theorem:
+	</p>
+	<script type="math/tex; mode=display">
+		\begin{aligned}
+			p(\mathcal{X}_k | \mathcal{Y}_k) &=
+			\frac{
+				p(y_k | \mathcal{X}_k, \mathcal{Y}_{k - 1}) \, p(\mathcal{X}_k | \mathcal{Y}_{k - 1})
+			}{p(y_k | \mathcal{Y}_{k - 1})} \\[0.5 em]
+			&\propto
+				p(y_k | x_k) \, p(x_k | x_{k - 1}) p(\mathcal{X}_{k - 1} | \mathcal{Y}_{k - 1})
+		\end{aligned}
+	</script>
+	<p class="fragment">
+		and thus<br>
+		<script type="math/tex; mode=display">
+			\begin{aligned}
+				w^{(i)}_k &\propto
+				\frac{p(\mathcal{X}^{(i)}_k | \mathcal{Y}_k)}{q(\mathcal{X}^{(i)}_k | \mathcal{Y}_k)} \\[0.5 em]
+				&\propto
+				\frac{
+						p(y_k | x^{(i)}_k) \, p(x^{(i)}_k | x^{(i)}_{k - 1}) p(\mathcal{X}^{(i)}_{k - 1} | \mathcal{Y}_{k - 1})
+				}{q(x^{(i)}_k | \mathcal{X}^{(i)}_{k - 1}, \mathcal{Y}_k) \, q(\mathcal{X}^{(i)}_{k - 1} | \mathcal{Y}_{k - 1})} \\[0.5 em]
+ 				&\propto
+ 				\frac{p(y_k | x^{(i)}_k) \, p(x^{(i)}_k | x^{(i)}_{k - 1})}{q(x^{(i)}_k | \mathcal{X}^{(i)}_{k - 1}, \mathcal{Y}_k)}
+				w^{(i)}_{k - 1}.
+			\end{aligned}
+		</script>
+	</p>
+</section>
+
+<section>
+	<h3>Sequential importance sampling 4/4</h3>
+	<p>
+		We can also restrict the proposal density to $q(x_k | x_{k - 1}, y_k)$. Then,
+	</p><br>
+	<script type="math/tex; mode=display">
+		w^{(i)}_k \propto
+		\frac{p(y_k | x^{(i)}_k) \, p(x^{(i)}_k | x^{(i)}_{k - 1})}{q(x^{(i)}_k | x^{(i)}_{k - 1}, y_k)}
+		w^{(i)}_{k - 1}
+	</script><br>
+	<p class="fragment">
+		and we can approximate the most recent state pdf as<br><br>
+		<script type="math/tex; mode=display">
+			p(x_k | \mathcal{Y}_k) \approx \sum_{i = 1}^{N} w^{(i)}_k \delta(x_k - x^{(i)}_k),
+		</script>
+	</p><br>
+	<p class="fragment">
+		We can summarise this algorithm in two steps: 1) draw samples from the proposal pdf;
+		2) update the weigths. This algorithm is called <em>sequential importance sampling (SIS)</em>.
+	</p>
+</section>
+
+<section>
+	<h3>Making it work: SIR 1/TODO</h3>
+	<p class="fragment">
+		Theoretically, we could set all weights equal and draw $x^{(i)}_k$ directly from $p(x_k | \mathcal{Y}_k)$.
+		However, this would be very ineffective, since we would sample from the whole state space,
+		including its 	&lsquo;unimportant&rsquo; regions.
+	</p>
 	<p>
 		Use the transition conditional distribution as the importance distribution function. -> SIS
 	</p>
