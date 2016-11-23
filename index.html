@@ -13,7 +13,7 @@ MIT License
 <head>
 	<meta charset="utf-8">
 
-	<link href="https://fonts.googleapis.com/css?family=Open+Sans:200|Raleway:200|Source+Code+Pro" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:200%7CRaleway:200%7CSource+Code+Pro" rel="stylesheet">
 
 	<title>From the Kalman to the particle filter</title>
 
@@ -37,7 +37,7 @@ MIT License
 
 <section class="center">
 	<h2>From the Kalman to the particle filter</h2>
-	<p><a style="color:#222; font-size: 75%" href="https://github.com/mp4096">Mikhail Pak</a>, November 2016</p>
+	<p style="font-size: 75%"><a style="color:#222" href="https://github.com/mp4096">Mikhail Pak</a>, November 2016</p>
 	<p style="color:#EEE; font-size: 75%">CC-BY-NC-SA 4.0</p>
 </section>
 
@@ -48,10 +48,9 @@ MIT License
 		<li><p><a style="color:#222" href="#/5">Kalman filter as a Bayesian estimator</a></p></li>
 		<li><p><a style="color:#222" href="#/6">Sequential importance sampling</a></p></li>
 		<li><p><a style="color:#222" href="#/10">Making it work: SIR and RPF</a></p></li>
-		<li><p><a style="color:#222" href="#/13">Comparison to EKF, UKF and EnKF</a></p></li>
+		<li><p><a style="color:#222" href="#/13">Comparison to the Kalman filter family</a></p></li>
 		<li><p><a style="color:#222" href="#/14">An example: Face tracking</a></p></li>
-		<!-- TODO: Slide numbers -->
-		<li><p><a style="color:#222" href="#/1">Conclusion</a></p></li>
+		<li><p><a style="color:#222" href="#/15">Conclusion</a></p></li>
 	</ul>
 </section>
 
@@ -358,39 +357,75 @@ while True:
 </section>
 
 <section>
-	<h3>Comparison to EKF, UKF and EnKF</h3>
-	<p>
-		EKF/UKF/EnKF: Compute the exact solution of a simpler, approximated problem
+	<h3>Comparison to the Kalman filter family</h3>
+	<ul>
+		<li class="fragment"><p>EKF/UKF/EnKF: Compute the exact solution of a simpler, approximated problem;</p></li>
+		<li class="fragment"><p>UKF: Deterministic sampling, statistical linearisation to a normal pdf;</p></li>
+		<li class="fragment"><p>EnKF: Random sampling, statistical linearisation to a normal pdf;</p></li>
+		<li class="fragment"><p>Mixture KF: Allows handling of multimodal pdfs.</p></li>
+	</ul><br>
+	<ul>
+		<li class="fragment"><p>Particle filter: Compute the approximate solution of the exact problem.</p></li>
+	</ul>
+
+	<p class="fragment">
+		Particle filtering is much more diverse than Kalman filtering.
+		One also has more and more complex design choices:
 	</p>
-	<p>
-		Particle filter: Compute the approximate solution of the exact problem
-	</p>
-	<p>
-		UKF: Deterministic sampling, statistical linearisation to a unimodal Gaussian
-		EnKF: Random sampling, still statistical linearisation to a unimodal Gaussian
-	</p>
-	<p>
-		Limitations of the *KF: Cannot approximate multimodal pdfs, except for mixture Kalman filters
-	</p>
+	<ul>
+		<li class="fragment"><p>proposal pdf;</p></li>
+		<li class="fragment"><p>resampling method;</p></li>
+		<li class="fragment"><p>number of particles.</p></li>
+	</ul>
 </section>
 
 <section>
 	<h3>An example: Face tracking</h3>
+</section>
+
+<section>
+	<h3>Conclusion</h3>
 	<p>
-		a
 	</p>
 	<p>
-		b
 	</p>
 </section>
 
 <section>
 	<h3>References</h3>
-	<p>
-		Thrun, Murphy, Bishop
+	<p style="font-size: 75%">
+		[1] M. Sanjeev Arulampalam, Simon Maskell, Neil Gordon and Tim Clapp.
+		A tutorial on particle filters for online nonlinear/non-Gaussian Bayesian tracking.
+		IEEE Transactions on Signal Processing, 50(2): 174–188, 2002.<br>
+		DOI: <a href="http://dx.doi.org/10.1109/78.978374">10.1109/78.978374</a>.
 	</p>
-	<p>
-		b
+	<p style="font-size: 75%">
+		[2] Christopher M. Bishop.
+		Pattern Recognition and Machine Learning.
+		Springer-Verlag New York Inc., 2006.
+		ISBN 0387310738.
+	</p>
+	<p style="font-size: 75%">
+		[3] Kevin P. Murphy. Machine Learning: A Probabilistic Perspective.
+		MIT Press, 2012.
+		ISBN: 9780262018029.
+	</p>
+	<p style="font-size: 75%">
+		[4] Sebastian Thrun, Wolfram Burgard and Dieter Fox.
+		Probabilistic Robotics.
+		MIT Press, 2005.<br>
+		ISBN: 9780262201629.
+	</p>
+	<p style="font-size: 75%">
+		[4] Roger R. Labbe Jr.
+		Kalman and Bayesian Filters in Python.
+		<a href="https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python">Repository</a>,
+		<a href="http://mybinder.org/repo/rlabbe/Kalman-and-Bayesian-Filters-in-Python">Binder</a>.
+	</p>
+	<p style="font-size: 75%">
+		[4] Mikhail Pak.
+		Two derivations of the Kalman filter.
+		<a href="https://mp4096.github.io/two-derivations-of-the-kalman-filter">Slides</a>.
 	</p>
 </section>
 
