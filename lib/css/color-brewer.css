@@ -57,7 +57,7 @@ pre .diff .header,
 pre .chunk,
 pre .asciidoc .blockquote,
 pre .markdown .blockquote {
-  color: #636363;
+  color: #777;
 }
 
 pre .number,
