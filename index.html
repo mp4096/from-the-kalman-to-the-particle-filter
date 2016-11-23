@@ -39,37 +39,64 @@ MIT License
 	<h2>From the Kalman to the particle filter</h2>
 	<small>
 		<p><a style="color:#222" href="https://github.com/mp4096">Mikhail Pak</a>, November 2016</p>
-		<p>CC-BY-NC-SA 4.0</p>
+		<p style="color:#EEE">CC-BY-NC-SA 4.0</p>
 	</small>
 </section>
 
 <section>
 	<h3>Outline</h3>
 	<ul>
+		<li><p><a style="color:#222" href="#/2">Introduction</a></p></li>
+		<li><p><a style="color:#222" href="#/5">Kalman filter as a Bayesian estimator</a></p></li>
+		<li><p><a style="color:#222" href="#/6">A generic particle filter</a></p></li>
 		<!-- TODO: Slide numbers -->
-		<li><p><a style="color:#222" href="#/1">Introduction</a></p></li>
-		<li><p><a style="color:#222" href="#/1">Kalman filter as a recursive Bayesian estimator</a></p></li>
-		<li><p><a style="color:#222" href="#/1">The basic idea of the particle filter</a></p></li>
 		<li><p><a style="color:#222" href="#/1">Sequential importance resampling</a></p></li>
-		<li><p><a style="color:#222" href="#/1">Resampling methods</a></p></li>
+		<li><p><a style="color:#222" href="#/1">Further extensions of the particle filter</a></p></li>
 		<li><p><a style="color:#222" href="#/1">Comparison to EKF, UKF and EnKF</a></p></li>
 		<li><p><a style="color:#222" href="#/1">An example: Face tracking</a></p></li>
+		<li><p><a style="color:#222" href="#/1">Conclusion</a></p></li>
 	</ul>
 </section>
 
 <section>
 	<h3>Introduction</h3>
 	<p>
-		a
+		The Kalman filter is well-known in the control engineering community.
+		Its extensions (EKF, UKF, EnKF, mixture KF) allow handling of nonlinear, non-Gaussian problems.
 	</p>
-	<p>
-		b
+	<p class="fragment">
+		On the other hand, we can also tackle the nonlinear filtering problem using a <em>particle filter</em>.
+		In this talk, I will<ul>
+			<li class="fragment"><p>show how both the Kalman and the particle filter can be derived
+				using the same Bayesian framework;</p></li>
+			<li class="fragment"><p>present the most widespread variants of the particle filter;</p></li>
+			<li class="fragment"><p>discuss the design choices for a particle filter;</p></li>
+			<li class="fragment"><p>compare it with the extensions of the Kalman filter;</p></li>
+			<li class="fragment"><p>show a simple demo of a particle filter for face tracking.</p></li>
+		</ul>
 	</p>
 </section>
 
 <section>
 	<h3>Introduction</h3>
-	<p>Let’s revise Bayesian inference before we discuss the filtering problem.</p>
+	<p>
+		We consider a discrete-time autonomous system.
+		Furthermore, we assume that it satisfies the Markov property.
+	</p>
+	<p class="fragment">
+		For a time instant $k$, we denote<ul>
+			<li class="fragment"><p>state by $x_k \in \mathbb{R}^n$;</p></li>
+			<li class="fragment"><p>measurement by $y_k \in \mathbb{R}^q$;</p></li>
+			<li class="fragment"><p>sequence of measurements $y_0, \ldots, y_k$ by $\mathcal{Y}_k$;</p></li>
+			<li class="fragment"><p>posterior pdf by $p(x_k | \mathcal{Y}_k)$;</p></li>
+			<li class="fragment"><p>transition pdf by $p(x_k | x_{k - 1})$;</p></li>
+			<li class="fragment"><p>measurement pdf by $p(y_k | x_k)$.</p></li>
+		</ul>
+</section>
+
+<section>
+	<h3>Introduction</h3>
+	<p>Now, let’s revise Bayesian inference before we discuss the filtering problem.</p>
 	<p>All derivations will be based on Bayes’ theorem:</p>
 	<script type="math/tex; mode=display">
 		p(A \,|\,B) = \frac{p(B \,|\,A) \ p(A)}{p(B)}
@@ -97,8 +124,11 @@ MIT License
 </section>
 
 <section>
-	<h3>Kalman filter as a recursive Bayesian estimator</h3>
-
+	<h3>Kalman filter as a Bayesian estimator</h3>
+	<p>
+		We can derive the Kalman filter directly by plugging Gaussian pdfs into the Bayes formula:
+	</p>
+	<p class="fragment">
 	<script type="math/tex; mode=display">
 		p(x_k \,|\,y_k, \mathcal{Y}_{k - 1})
 		=
@@ -109,22 +139,58 @@ MIT License
 		}{%
 			p(y_k \,|\,\mathcal{Y}_{k - 1})
 		}.
-	</script><br>
+	</script>
+	</p>
+	<p style="text-align:center" class="fragment">
+		$\downarrow$<br>
+		<script type="math/tex; mode=display">
+			\left. \mathcal{N}(\hat{x}_k, \ P_k) \right|_{x_k}
+			=
+			\frac{%
+				\left. \mathcal{N}(C_k x_k, \ R_k) \right|_{y_k}
+				\ %
+				\left. \mathcal{N}(\hat{x}_k^-, \ P_k^-) \right|_{x_k}
+			}{%
+				\left. \mathcal{N}(\hat{y}_k^-, \ C_k P_k^- C_k^\mathrm{T} + R_k) \right|_{y_k}
+			}.
+		</script><br>
+	</p>
+	<p class="fragment">
+		After some math, we obtain:
+		<script type="math/tex; mode=display">
+			\begin{aligned}
+				\hat{x}_k &= \hat{x}_k^- + P_k C_k^\mathrm{T} R_k^{-1} (y_k - \hat{y}_k^-), \\
+				P_k  &= \left( (P_k^-)^{-1} + C_k^\mathrm{T} R_k^{-1} C_k \right)^{-1}.
+				% = \left( I - P_k^- C_k^\mathrm{T} (C_k P_k^- C_k^\mathrm{T} + R_k)^{-1} C_k \right) P_k^-.
+			\end{aligned}
+		</script>
+	</p>
 </section>
 
 <section>
-	<h3>The basic idea of the particle filter</h3>
+	<h3>A generic particle filter</h3>
 	<p>
-		Instead of the Gaussian pdf (as in the KF) represent the posterior pdf
-		as a finite set of weighted samples.
+		The main idea of a particle filter is to approximate the posterior pdf
+		by a finite set of weighted samples (particles):
 	</p>
-	<p>
-		Use the transition conditional distribution as the importance distribution function. -> SIS
+	<script type="math/tex; mode=display">
+		p(x_k | \mathcal{Y}_k) \approx \sum_{i = 1}^{N} w^{(i)}_k \delta(x_k - x^{(i)}_k),
+	</script>
+	<p class="fragment">
+		where $\delta$ is the Dirac measure, $w^{(i)}_k$ is the <em>weight</em> of the $i$-th particle
+		at the time instant $k$ and $x^{(i)}_k$ is the $i$-th sample drawn from some
+		<em>proposal distribution</em> over the state space.
+	</p>
+	<p class="fragment">
+		Theoretically, we could set all weights equal and draw $x^{(i)}_k$ directly from $p(x_k | \mathcal{Y}_k)$.
 	</p>
 </section>
 
 <section>
 	<h3>Sequential importance resampling</h3>
+	<p>
+		Use the transition conditional distribution as the importance distribution function. -> SIS
+	</p>
 	<p>
 		SIS suffers from the so called samples degeneracy, i.e. there are a lot of particles with
 		very low weight while a couple of particles have huge weights and dominate the pdf.
