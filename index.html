@@ -115,27 +115,39 @@ MIT License
 <section>
 	<h3>The basic idea of the particle filter</h3>
 	<p>
-		a
+		Instead of the Gaussian pdf (as in the KF) represent the posterior pdf
+		as a finite set of weighted samples.
 	</p>
 	<p>
-		b
+		Use the transition conditional distribution as the importance distribution function. -> SIS
 	</p>
 </section>
 
 <section>
 	<h3>Sequential importance resampling</h3>
 	<p>
-		a
+		SIS suffers from the so called samples degeneracy, i.e. there are a lot of particles with
+		very low weight while a couple of particles have huge weights and dominate the pdf.
 	</p>
 	<p>
-		b
+		Solution: Resample (with replacemnt) if the number of effective particles falls below a certain
+		threshold. -> SIR
+	</p>
+	<p>
+		However, this, in turn, can lead to other problems such as samples impoverishment, i.e.
+		the samples cluster all around the same point in state space.
+		This happens especially often if the process noise is very small.
+	</p>
+	<p>
+		Solution: Regularised particle filter.
 	</p>
 </section>
 
 <section>
 	<h3>Resampling methods</h3>
 	<p>
-		a
+		There are multiple resampling methods, all of which have some advantages and disadvantages:
+		monomial, systematic, stratified and residual
 	</p>
 	<p>
 		b
@@ -145,10 +157,17 @@ MIT License
 <section>
 	<h3>Comparison to EKF, UKF and EnKF</h3>
 	<p>
-		a
+		EKF/UKF/EnKF: Compute the exact solution of a simpler, approximated problem
 	</p>
 	<p>
-		b
+		Particle filter: Compute the approximate solution of the exact problem
+	</p>
+	<p>
+		UKF: Deterministic sampling, statistical linearisation to a unimodal Gaussian
+		EnKF: Random sampling, still statistical linearisation to a unimodal Gaussian
+	</p>
+	<p>
+		Limitations of the *KF: Cannot approximate multimodal pdfs, except for mixture Kalman filters
 	</p>
 </section>
 
@@ -165,7 +184,7 @@ MIT License
 <section>
 	<h3>References</h3>
 	<p>
-		a
+		Thrun, Murphy, Bishop
 	</p>
 	<p>
 		b
