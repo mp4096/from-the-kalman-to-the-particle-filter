@@ -297,23 +297,21 @@ MIT License
 		There are many resampling methods, e.g. multinomial, residual, systematic and stratified.
 		Due to resampling, $w^{(i)}_{k - 1} = N^{-1}$ $\forall i$.
 	</p>
-	<p class="fragment">
-		The second &lsquo;ingredient&rsquo; is to use the prior density as a proposal pdf<br><br>
+	<div class="fragment">
+		<p>The second &lsquo;ingredient&rsquo; is to use the prior density as a proposal pdf</p>
 		<script type="math/tex; mode=display">
 			q(x_k | x^{(i)}_{k - 1}, y_k) = p(x_k | x^{(i)}_{k - 1})
-		</script><br>
-		which, together with resampling, leads us to a very simple weight update equation:<br><br>
+		</script>
+		<p>which, together with resampling, leads us to a very simple weight update equation:</p>
 		<script type="math/tex; mode=display">
 			w^{(i)}_k \propto p(y_k | x^{(i)}_k).
 		</script>
-	</p>
+	</div>
 </section>
 
 <section>
 	<h3>Making it work: SIR and RPF 2/3</h3>
-	<p>
-		Thus, we can finally specify an algorithm for a usable particle filter:
-	</p>
+	<p>Thus, we can finally specify an algorithm for a usable particle filter:</p>
 <pre><code class="lang-python" data-trim data-noescape>
 while True:
     y_curr = get_measurements()
@@ -338,15 +336,17 @@ while True:
 		especially if the process noise is small.
 		In this case, a <em>regularised particle filter</em> might be a good solution.
 	</p>
-	<p class="fragment">
-		A regularised particle filter is identical to the SIR except that it resamples from
-		a continuous approximation for the posterior pdf:<br><br>
+	<div class="fragment">
+		<p>
+			A regularised particle filter is identical to the SIR except that it resamples from
+			a continuous approximation for the posterior pdf:
+		</p>
 		<script type="math/tex; mode=display">
 			p(x_k | \mathcal{Y}_k) \approx \sum_{i = 1}^N w^{(i)}_{k} K(x_k - x^{(i)}_k).
 		</script>
-	</p>
-	<p class="fragment">
-		$K(x)$ is an appropriate kernel pdf such that<br><br>
+	</div>
+	<div class="fragment">
+		<p>$K(x)$ is an appropriate kernel pdf such that</p>
 		<script type="math/tex; mode=display">
 		\begin{aligned}
 			&\int x \, K(x) dx = 0 &
@@ -354,7 +354,7 @@ while True:
 			&\int \|x\|^2 K(x) dx < \infty.
 		\end{aligned}
 		</script>
-	</p>
+	</div>
 	<p class="fragment">
 		The kernel type and its hyperparameters are a design choice depending on
 		the formulation of the particle filter.
