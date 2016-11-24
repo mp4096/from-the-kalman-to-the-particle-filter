@@ -359,19 +359,9 @@ while True:
 			p(x_k | \mathcal{Y}_k) \approx \sum_{i = 1}^N w^{(i)}_{k} K(x_k - x^{(i)}_k).
 		</script>
 	</div>
-	<div class="fragment">
-		<p>$K(x)$ is an appropriate kernel pdf such that</p>
-		<script type="math/tex; mode=display">
-		\begin{aligned}
-			&\int x \, K(x) dx = 0 &
-			&\text{and} &
-			&\int \|x\|^2 K(x) dx < \infty.
-		\end{aligned}
-		</script>
-	</div>
 	<p class="fragment">
-		The kernel type and its hyperparameters are a design choice depending on
-		the formulation of the particle filter.
+		$K(x)$ is an appropriate kernel pdf that must satisfy certain conditions.
+		Its type and hyperparameters are have to be tailored to the concrete filtering problem.
 	</p>
 </section>
 
@@ -394,7 +384,8 @@ while True:
 	<ul>
 		<li class="fragment"><p>proposal pdf;</p></li>
 		<li class="fragment"><p>resampling method;</p></li>
-		<li class="fragment"><p>number of particles.</p></li>
+		<li class="fragment"><p>kernel type and its hyperparameters (RPF);</p></li>
+		<li class="fragment"><p>process and measurement noise parameters, number of particles.</p></li>
 	</ul>
 </section>
 
