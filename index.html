@@ -74,17 +74,18 @@ MIT License
 		The Kalman filter is well-known in the control engineering community.
 		Its extensions (EKF, UKF, EnKF, mixture KF) allow handling of nonlinear, non-Gaussian problems.
 	</p>
-	<p>
+	<p class="fragment">
+		On the other hand, we can also tackle the nonlinear filtering problem using a <em>particle filter</em>.
+	</p>
+	<p class="fragment">
 		We consider a discrete-time autonomous system.
 		Furthermore, we assume that it satisfies the Markov property.
 	</p>
 	<div class="fragment">
 		<p>For a time instant $k$, we denote</p>
 		<ul>
-			<li class="fragment"><p>state by $x_k \in \mathbb{R}^n$;</p></li>
-			<li class="fragment"><p>state trajectory $x_0, \ldots, x_k$ by $\mathcal{X}_k$;</p></li>
-			<li class="fragment"><p>measurement by $y_k \in \mathbb{R}^q$;</p></li>
-			<li class="fragment"><p>sequence of measurements $y_0, \ldots, y_k$ by $\mathcal{Y}_k$;</p></li>
+			<li class="fragment"><p>state by $x_k \in \mathbb{R}^n$ and state trajectory $x_0, \ldots, x_k$ by $\mathcal{X}_k$;</p></li>
+			<li class="fragment"><p>measurement by $y_k \in \mathbb{R}^q$ and sequence of measurements $y_0, \ldots, y_k$ by $\mathcal{Y}_k$;</p></li>
 			<li class="fragment"><p>transition pdf by $p(x_k | x_{k - 1})$;</p></li>
 			<li class="fragment"><p>measurement pdf by $p(y_k | x_k)$.</p></li>
 		</ul>
@@ -377,6 +378,11 @@ for y in yield_measurements():
 	<div align="center">
 		<iframe width="560" height="315" src="https://www.youtube.com/embed/87htMQ6bX-g" frameborder="0" allowfullscreen></iframe>
 	</div>
+
+	<p class="fragment">
+		Looks nice, but nothing really special.
+		We could probably make an EKF with the same performance and much better runtime.
+	</p>
 </section>
 
 
@@ -385,16 +391,30 @@ for y in yield_measurements():
 	<div align="center">
 		<iframe width="560" height="315" src="https://www.youtube.com/embed/vNGQFoCIsDg" frameborder="0" allowfullscreen></iframe>
 	</div>
+
+	<p class="fragment">
+		Now you see the strength of the particle filtering:
+		It faithfully approximates the posterior pdf as a multimodal density without
+		resorting to a unimodal Gaussian pdf.
+	</p>
 </section>
 
 
 <section>
 	<h3>Conclusion</h3>
 	<p>
-		Particle filtering relies heavily on the concept of <em>belief</em>,
+		Particle filter provide a <em>belief</em> about the current system state,
 		i.e. a probability density represented by a finite number of weighted samples.
 	</p>
-	<p>
+	<p class="fragment">
+		Particle filters can handle arbitrary nonlinearities and noise distributions,
+		varying number of measurements or even missing measurements.
+	</p>
+	<p class="fragment">
+		On the other hand, they can be very fickle and have to be tuned carefully.
+	</p>
+	<p class="fragment">
+		A SIR PF is relatively easy to implement, but the runtime can be an issue.
 	</p>
 </section>
 
@@ -424,17 +444,26 @@ for y in yield_measurements():
 		ISBN: 9780262201629.
 	</p>
 	<p style="font-size: 75%">
-		[4] Roger R. Labbe Jr.
+		[5] Roger R. Labbe Jr.
 		Kalman and Bayesian Filters in Python.
 		<a href="https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python">Repository</a>,
 		<a href="http://mybinder.org/repo/rlabbe/Kalman-and-Bayesian-Filters-in-Python">Binder</a>.
 	</p>
 	<p style="font-size: 75%">
-		[4] Mikhail Pak.
+		[6] Mikhail Pak.
 		Two derivations of the Kalman filter.
 		<a href="https://github.com/mp4096/two-derivations-of-the-kalman-filter">Repository</a>,
 		<a href="https://mp4096.github.io/two-derivations-of-the-kalman-filter">Slides</a>.
 	</p>
+</section>
+
+<section>
+	<h3>But what about stability or convergence?</h3>
+  <div style="margin-left: auto; margin-right: auto; width:70%">
+		<img data-src="res/taxi.jpg"><br>
+		<a style="font-size:50%; color:#AAA" href="https://pixabay.com/en/taxi-auto-road-drive-shield-1515420/">By Michael Gaida, CC0</a>
+	</div>
+	<p></p>
 </section>
 
 
