@@ -75,17 +75,16 @@ MIT License
 		Its extensions (EKF, UKF, EnKF, mixture KF) allow handling of nonlinear, non-Gaussian problems.
 	</p>
 	<p class="fragment">
-		On the other hand, we can also tackle the nonlinear filtering problem using a <em>particle filter</em>.
-	</p>
+		<em>Particle filtering</em> is an alternative approach to the nonlinear filtering problem.
+	</p><br>
 	<p class="fragment">
-		We consider a discrete-time autonomous system.
-		Furthermore, we assume that it satisfies the Markov property.
+		Consider a discrete-time Markovian autonomous system.
 	</p>
 	<div class="fragment">
 		<p>For a time instant $k$, we denote</p>
 		<ul>
-			<li class="fragment"><p>state by $x_k \in \mathbb{R}^n$ and state trajectory $x_0, \ldots, x_k$ by $\mathcal{X}_k$;</p></li>
-			<li class="fragment"><p>measurement by $y_k \in \mathbb{R}^q$ and sequence of measurements $y_0, \ldots, y_k$ by $\mathcal{Y}_k$;</p></li>
+			<li class="fragment"><p>state by $x_k$ and state trajectory $x_0, \ldots, x_k$ by $\mathcal{X}_k$;</p></li>
+			<li class="fragment"><p>measurement by $y_k$ and sequence of measurements $y_0, \ldots, y_k$ by $\mathcal{Y}_k$;</p></li>
 			<li class="fragment"><p>transition pdf by $p(x_k | x_{k - 1})$;</p></li>
 			<li class="fragment"><p>measurement pdf by $p(y_k | x_k)$.</p></li>
 		</ul>
@@ -160,9 +159,13 @@ MIT License
 			\begin{aligned}
 				\hat{x}_k &= \hat{x}_k^- + P_k C_k^\mathrm{T} R_k^{-1} (y_k - \hat{y}_k^-), \\
 				P_k  &= \left( (P_k^-)^{-1} + C_k^\mathrm{T} R_k^{-1} C_k \right)^{-1}.
-				% = \left( I - P_k^- C_k^\mathrm{T} (C_k P_k^- C_k^\mathrm{T} + R_k)^{-1} C_k \right) P_k^-.
+				% = \left( I - P_k^- C_k^\mathrm{T} (C_k P_k^- C_k^\mathrm{T} + R_k)^{-1} C_k \right) P_k^-,
 			\end{aligned}
 		</script>
+		<p>
+			with $\hat{x}_k^- = A_{k - 1} \hat{x}_{k - 1}$, $\hat{y}_k^- = C_k \hat{x}_k^-$ and
+			$P_k^- = A_{k - 1} P_{k - 1} A_{k - 1}^\mathrm{T} + Q_k$.
+		</p>
 	</div>
 </section>
 
@@ -339,7 +342,7 @@ for y in yield_measurements():
 	<p>
 		Unfortunately, SIR itself suffers from <em>sample impoverishment</em>,
 		especially if the process noise is small.
-		In this case, a <em>regularised particle filter</em> might be a good solution.
+		In this case, a <em>regularised particle filter (RPF)</em> might be a good solution.
 	</p>
 	<div class="fragment">
 		<p>
@@ -352,7 +355,7 @@ for y in yield_measurements():
 	</div>
 	<p class="fragment">
 		$K(x)$ is an appropriate kernel pdf that must satisfy certain conditions.
-		Its type and hyperparameters are have to be tailored to the concrete filtering problem.
+		Its type and hyperparameters have to be tailored to the concrete filtering problem.
 	</p>
 </section>
 
